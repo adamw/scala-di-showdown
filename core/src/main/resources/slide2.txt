@@ -1,0 +1,7 @@
+Dependency Injection
+
+* you don't need anything special to do DI
+
+* DI is just using parameters
+
+* with frameworks no need to write `new` anywhere
