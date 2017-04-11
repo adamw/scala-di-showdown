@@ -1,10 +1,10 @@
-package com.softwaremill.di
+package com.softwaremill.di.done
 
 import java.util.concurrent.ConcurrentHashMap
 
-import scala.concurrent.{Await, Future}
-import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 object Step1 extends App {
   class CRUD[K, V] {
@@ -12,8 +12,7 @@ object Step1 extends App {
 
     def create(k: K, v: V): Future[Boolean] = Future.successful(s.putIfAbsent(k, v) == null)
     def read(k: K): Future[Option[V]] = Future.successful(Option(s.get(k)))
-    //def update(k: K, f: V => V): Future[Unit] = Future.successful(Option(s.get(k)).map(f).foreach(s.put(k, _)))
-    def update(k: K, v: V): Future[Unit] = Future.successful(s.put(k, v)) // todo
+    def update(k: K, v: V): Future[Unit] = Future.successful(s.put(k, v))
     def delete(k: K): Future[Boolean] = Future.successful(s.remove(k) != null)
   }
 
@@ -26,7 +25,7 @@ object Step1 extends App {
   def addFood(fc: FoodCRUD, n: FoodName, q: Quantity): Future[Unit] = for {
     current <- fc.read(n)
     updated = current.map(c => c + q).getOrElse(q)
-    _ <- fc.create(n, updated)
+    _ <- fc.update(n, updated)
   } yield ()
 
   def takeFood(fc: FoodCRUD, n: FoodName, q: Quantity): Future[Quantity] = for {

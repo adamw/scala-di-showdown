@@ -1,9 +1,7 @@
-About me
+Dependency Injection
 
-* coder @ [SoftwareMill](http://www.softwaremill.com)
+* you don't need anything special to do DI
 
-* open-source: MacWire, ElasticMQ, Quicklens, Supler, Envers, Veripacks, ...
+* DI is just using parameters
 
-* [blog](http://www.softwaremill.com/blog) / [old blog](http://www.warski.org)
-
-* [twitter](@adamwarski)
+* with frameworks no need to write `new` anywhere

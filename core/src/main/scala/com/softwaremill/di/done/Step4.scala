@@ -1,4 +1,4 @@
-package com.softwaremill.di
+package com.softwaremill.di.done
 
 import java.util.concurrent.ConcurrentHashMap
 
@@ -12,7 +12,6 @@ object Step4 extends App {
 
     def create(k: K, v: V): Future[Boolean] = Future.successful(s.putIfAbsent(k, v) == null)
     def read(k: K): Future[Option[V]] = Future.successful(Option(s.get(k)))
-    //def update(k: K, f: V => V): Future[Unit] = Future.successful(Option(s.get(k)).map(f).foreach(s.put(k, _)))
     def update(k: K, v: V): Future[Unit] = Future.successful(s.put(k, v)) // todo
     def delete(k: K): Future[Boolean] = Future.successful(s.remove(k) != null)
   }
@@ -28,7 +27,7 @@ object Step4 extends App {
       for {
         current <- fc.read(n)
         updated = current.map(c => c + q).getOrElse(q)
-        _ <- fc.create(n, updated)
+        _ <- fc.update(n, updated)
         _ <- iot.notifyUser(s"$q of $n added to the fridge ")
       } yield ()
     }

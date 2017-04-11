@@ -1,7 +1,16 @@
 Dependency Injection
 
-* you don't need anything special to do DI
+* what is it?
+  * decouple client and service code
+  * inversion of control
 
-* DI is just using parameters
+* why?
+  * hiding implementation details
+  * testing
+  * separation of concerns
+  * organize code
 
-* with frameworks no need to write `new` anywhere
+* how?
+  * constructor parameters
+  * service locator
+  * getters/setters

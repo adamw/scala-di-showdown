@@ -1,0 +1,10 @@
+About me
+
+* coder @ [SoftwareMill](http://www.softwaremill.com)
+  ** custom Scala, Big&Fast Data, Business, Messaging, ... software
+
+* open-source: MacWire, ElasticMQ, Quicklens, Supler, Envers, Veripacks, ...
+
+* [blog](http://www.softwaremill.com/blog) / [old blog](http://www.warski.org)
+
+* [twitter](@adamwarski)

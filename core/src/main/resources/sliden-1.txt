@@ -1,0 +1,15 @@
+* constructors: hide implementation details
+
+* reader monad: make dependency explicit, track effects
+
+* both useful!
+
+* frameworks?
+  * only when there's a clear benefit
+  * don't give up control over the object graph for short-term profit
+
+* DI Frameworks & Libraries:
+  * [MacWire](https://github.com/adamw/macwire)
+  * [Grafter](https://github.com/zalando/grafter)
+  * [Guice](https://github.com/google/guice)
+  * [Scaldi](http://scaldi.org)
