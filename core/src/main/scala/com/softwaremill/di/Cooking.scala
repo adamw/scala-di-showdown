@@ -2,12 +2,15 @@ package com.softwaremill.di
 
 import java.util.concurrent.ConcurrentHashMap
 
+import cats.data.ReaderT
+import cats.implicits._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 
 object Cooking extends App {
-  class CRUD[K, V] {
+  class KVStore[K, V] {
     private val s = new ConcurrentHashMap[K, V]()
 
     def create(k: K, v: V): Future[Boolean] = Future.successful(s.putIfAbsent(k, v) == null)

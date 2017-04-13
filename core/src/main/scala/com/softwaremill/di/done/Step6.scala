@@ -12,14 +12,14 @@ import scala.concurrent.{Await, Future}
 object Step6 extends App {
   case class CloudConfig(username: String, password: String)
 
-  trait CRUD[K, V] {
+  trait KVStore[K, V] {
     def create(k: K, v: V): Future[Boolean]
     def read(k: K): Future[Option[V]]
     def update(k: K, v: V): Future[Unit]
     def delete(k: K): Future[Boolean]
   }
 
-  class InMemoryCRUD[K, V] extends CRUD[K, V] {
+  class InMemoryKVStore[K, V] extends KVStore[K, V] {
     private val s = new ConcurrentHashMap[K, V]()
 
     def create(k: K, v: V): Future[Boolean] = Future.successful(s.putIfAbsent(k, v) == null)
@@ -28,7 +28,7 @@ object Step6 extends App {
     def delete(k: K): Future[Boolean] = Future.successful(s.remove(k) != null)
   }
 
-  class CloudCRUD[K, V](config: CloudConfig) extends CRUD[K, V] {
+  class CloudKVStore[K, V](config: CloudConfig) extends KVStore[K, V] {
     override def create(k: K, v: V): Future[Boolean] = ???
     override def read(k: K): Future[Option[V]] = ???
     override def update(k: K, v: V): Future[Unit] = ???
@@ -39,11 +39,11 @@ object Step6 extends App {
 
   type FoodName = String
   type Quantity = Int
-  type FoodCRUD = CRUD[String, Int]
-  type CRUDResult[T] = ReaderT[Future, FoodCRUD, T]
+  type FoodKV = KVStore[String, Int]
+  type KVResult[T] = ReaderT[Future, FoodKV, T]
 
   class Fridge(iot: IoT) {
-    def addFood(n: FoodName, q: Quantity): CRUDResult[Unit] = ReaderT { fc =>
+    def addFood(n: FoodName, q: Quantity): KVResult[Unit] = ReaderT { fc =>
       for {
         current <- fc.read(n)
         updated = current.map(c => c + q).getOrElse(q)
@@ -52,7 +52,7 @@ object Step6 extends App {
       } yield ()
     }
 
-    def takeFood(n: FoodName, q: Quantity): CRUDResult[Int] = ReaderT { fc =>
+    def takeFood(n: FoodName, q: Quantity): KVResult[Int] = ReaderT { fc =>
       for {
         current <- fc.read(n)
         inStock = current.getOrElse(0)
@@ -67,7 +67,7 @@ object Step6 extends App {
   //
 
   class Cooker(f: Fridge) {
-    def cookSauce(q: Quantity): CRUDResult[Int] = {
+    def cookSauce(q: Quantity): KVResult[Int] = {
       for {
         tomatoQ <- f.takeFood("tomato", q)
         vegQ <- f.takeFood("non-tomato veggies", q)
@@ -77,7 +77,7 @@ object Step6 extends App {
       } yield sauceQ
     }
 
-    def cookPasta(q: Quantity): CRUDResult[Int] = {
+    def cookPasta(q: Quantity): KVResult[Int] = {
       for {
         pastaQ <- f.takeFood("pasta", q)
         _ <- f.takeFood("salt", 10)
@@ -101,7 +101,7 @@ object Step6 extends App {
   //
 
   lazy val cfg = CloudConfig("scott", "tiger")
-  lazy val fc = new CloudCRUD[FoodName, Quantity](cfg)
+  lazy val fc = new CloudKVStore[FoodName, Quantity](cfg)
   lazy val fridge = new Fridge(iot)
   lazy val iot = new CloudIoTGateway(cfg)
   lazy val cooker = new Cooker(fridge)
